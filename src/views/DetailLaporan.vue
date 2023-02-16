@@ -33,7 +33,11 @@
         <ul class="list-group list-group-flush">
           <li class="list-group-item">
             <!-- dibagi dua kolom  -->
-            <form class="" v-on:submit.prevent>
+            <form
+              class=""
+              @submit.prevent="uploadKegiatan"
+              enctype="multipart/form-data"
+            >
               <div class="row">
                 <div class="col-md-6">
                   <!-- isi kolom ke 1 -->
@@ -69,13 +73,17 @@
                     </select>
                   </div>
                   <!--  -->
-                  <div class="form-group">
+                  <div class="row">
+                    <div class="col">
+                      <div class="form-group">
                     <label for="nama">Lama Kegiatan (Dalam Menit)</label>
                     <input
                       v-model="durasi"
                       type="number"
                       class="form-control"
                     />
+                  </div>
+                    </div>                    
                   </div>
                   <div class="form-group">
                     <label for="nama">Deskripsi Kegiatan</label>
@@ -85,7 +93,7 @@
                       class="form-control"
                     />
                   </div>
-                  <button v-on:click="uploadKegiatan" class="btn btn-info">
+                  <button class="btn btn-info">
                     <b-icon-upload></b-icon-upload> Upload
                   </button>
                   <!--  -->
@@ -93,32 +101,16 @@
                 <div class="col-md-6">
                   <!-- isi kolom ke 2  -->
                   <div class="form-group">
-                    <label for="nama">Link Foto 1</label>
+                    <label for="nama">Upload Foto Kegiatan</label>
                     <input
-                      v-model="foto1"
-                      type="text"
+                      type="file"
+                      ref="file"
+                      @change="onSelect"
                       class="form-control"
                       placeholder="Wajib link Google Drive"
                     />
                   </div>
-                  <div class="form-group">
-                    <label for="nama">Link Foto 2</label>
-                    <input
-                      v-model="foto2"
-                      type="text"
-                      class="form-control"
-                      placeholder="Wajib link Google Drive"
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="nama">Link Foto 3</label>
-                    <input
-                      v-model="foto3"
-                      type="text"
-                      class="form-control"
-                      placeholder="Wajib link Google Drive"
-                    />
-                  </div>
+
                   <i>Ket. Untuk Foto Minimal satu buah yang diisi</i>
                 </div>
               </div>
@@ -182,35 +174,12 @@
                   <td>{{ laporans.durasi }} Menit</td>
                   <td>{{ laporans.kegiatan }}</td>
                   <td>
-                    <span v-if="laporans.foto1.split('/')[5]">
+                    <span>
                       <img
                         width="120"
-                        :src="
-                          'http://drive.google.com/uc?export=view&id=' +
-                          laporans.foto1.split('/')[5]
-                        "
+                        :src=laporans.url
                       />
-                    </span>
-                    <span v-if="laporans.foto2.split('/')[5]">
-                      <img
-                        class="ml-1"
-                        width="120"
-                        :src="
-                          'http://drive.google.com/uc?export=view&id=' +
-                          laporans.foto2.split('/')[5]
-                        "
-                      />
-                    </span>
-                    <span v-if="laporans.foto3.split('/')[5]">
-                      <img
-                        class="ml-1"
-                        width="120"
-                        :src="
-                          'http://drive.google.com/uc?export=view&id=' +
-                          laporans.foto3.split('/')[5]
-                        "
-                      />
-                    </span>
+                    </span>                    
                   </td>
                   <td>
                     <button
@@ -285,15 +254,19 @@ export default {
       laporan: [],
       tanggal: "",
       hari: "",
+      dariJam: "",
+      sampaiJam: "",
       durasi: "",
       kegiatan: "",
-      foto1: "",
-      foto2: "",
-      foto3: "",
+      file: "",
       totalMenit: "",
     };
   },
   methods: {
+    onSelect() {
+      const file = this.$refs.file.files[0];
+      this.file = file;
+    },
     uploadKegiatan() {
       // pastikan tidak ada form yang kosong
       if (
@@ -301,33 +274,30 @@ export default {
         this.hari &&
         this.durasi &&
         this.kegiatan &&
-        this.foto1
+        this.file
       ) {
-        axios
-          .post(API_URL + "laporan", {
-            nip: this.guruku.nip,
-            tanggal: this.tanggal.split("-")[2],
-            bulan: this.tanggal.split("-")[1],
-            tahun: this.tanggal.split("-")[0],
-            hari: this.hari,
-            durasi: this.durasi,
-            kegiatan: this.kegiatan,
-            foto1: this.foto1,
-            foto2: this.foto2,
-            foto3: this.foto3,
-          })
-          .then(() => {
+        const formData = new FormData();
+        formData.append("nip", this.guruku.nip);
+        formData.append("tanggal", this.tanggal.split("-")[2]);
+        formData.append("bulan", this.tanggal.split("-")[1]);
+        formData.append("tahun", this.tanggal.split("-")[0]);
+        formData.append("hari", this.hari);
+        formData.append("dari", this.dariJam);
+        formData.append("sampai", this.sampaiJam);
+        formData.append("durasi", this.durasi);
+        formData.append("kegiatan", this.kegiatan);
+        formData.append("file", this.file);
+        axios.post(API_URL + "laporan", formData)
+        .then(() => {
             swal("Terima Kasih", "Kegiatan Berhasil Di Upload", "success", {
               timer: 2000,
               button: false,
             });
-            this.durasi = "";
+            this.dariJam = "";
+            this.sampaiJam = "";
             this.kegiatan = "";
-            this.foto1 = "";
-            this.foto2 = "";
-            this.foto3 = "";
-          })
-          .catch();
+            this.file = "";
+          })        
       } else {
         swal("Peringatan", "Daftar Isian Belum Lengkap", "warning", {
           timer: 2000,
@@ -386,7 +356,7 @@ export default {
                 })
                 .then((response) => {
                   this.laporan = response.data;
-                  console.log("list laporan loaded");
+                  console.log(response.data);
                 })
                 .catch();
               // munculkan jumlah menit

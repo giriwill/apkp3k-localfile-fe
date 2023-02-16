@@ -110,7 +110,7 @@
               <tr :hidden="!printttd">
                 <td colspan="8" align="center" :hidden="!printttd">
                   <strong
-                    >LAPORAN KINERJA HARIAN P3K/NON ASN TENAGA PENDIDIK</strong
+                    >LAPORAN KINERJA HARIAN P3K/NON ASN TENAGA KEPENDIDIKAN</strong
                   >
                 </td>
               </tr>
@@ -131,29 +131,29 @@
                 <td colspan="8">BULAN : {{ namanamaBulan(this.bulan) }}</td>
               </tr>
               <tr :hidden="!printttd">
-                <td align="center" width="10"><strong> No.</strong></td>
-                <td align="center" width="70"><strong> Hari</strong></td>
-                <td align="center" width="90"><strong> Tanggal</strong></td>
-                <td align="center" width="80">
-                  <strong> Jumlah Menit</strong>
+                <td align="center"><strong> No.</strong></td>
+                <td align="center"><strong> Hari</strong></td>
+                <td align="center"><strong> Tanggal</strong></td>
+                <td align="center">
+                  <strong> Jumlah Menit </strong>
                 </td>
-                <td align="center" width="300">
+                <td align="center">
                   <strong> Uraian Pekerjaan</strong>
                 </td>
                 <td align="center"><strong> Foto</strong></td>
-                <td align="center" width="100"><strong> Paraf</strong></td>
+                <td align="center"><strong> Paraf</strong></td>
               </tr>
               <tr
                 :hidden="!printttd"
                 style="background-color: grey; color: white"
               >
-                <td align="center" width="10">1</td>
-                <td align="center" width="70">2</td>
-                <td align="center" width="90">3</td>
-                <td align="center" width="80">4</td>
-                <td align="center" width="300">5</td>
+                <td align="center">1</td>
+                <td align="center">2</td>
+                <td align="center">3</td>
+                <td align="center">4</td>
+                <td align="center">5</td>
                 <td align="center">6</td>
-                <td align="center" width="100">7</td>
+                <td align="center">7</td>
               </tr>
               <tr v-for="(laporans, index) in laporan" :key="laporans.id">
                 <td align="center" width="10" :hidden="baris[index + 1]">
@@ -169,41 +169,18 @@
                 </td>
                 <td align="center" width="80" :hidden="baris[index + 1]">
                   {{ laporans.durasi }} Menit
-                </td>
+                </td>                
                 <td align="left" width="300" :hidden="baris[index + 1]">
                   {{ laporans.kegiatan }}
                 </td>
                 <td align="center" :hidden="baris[index + 1]">
-                  <span v-if="laporans.foto1.split('/')[5]">
+                  <span>
                     <img
                       class="mr-2"
                       width="150"
-                      :src="
-                        'http://drive.google.com/uc?export=view&id=' +
-                        laporans.foto1.split('/')[5]
-                      "
+                      :src=laporans.url
                     />
-                  </span>
-                  <span v-if="laporans.foto2.split('/')[5]">
-                    <img
-                      class="mr-2"
-                      width="120"
-                      :src="
-                        'http://drive.google.com/uc?export=view&id=' +
-                        laporans.foto2.split('/')[5]
-                      "
-                    />
-                  </span>
-                  <span v-if="laporans.foto3.split('/')[5]">
-                    <img
-                      class="mr-2"
-                      width="120"
-                      :src="
-                        'http://drive.google.com/uc?export=view&id=' +
-                        laporans.foto3.split('/')[5]
-                      "
-                    />
-                  </span>
+                  </span>                
                 </td>
                 <td align="center" width="100" :hidden="baris[index + 1]"></td>
                 <td align="center" :hidden="!kolhilang">
@@ -336,7 +313,7 @@ export default {
     },
     print() {
       // Pass the element id here
-      this.$htmlToPaper("printMe");
+      this.$htmlToPaper("printMe");      
     },
     hilangkanKegiatan(awal,akhir) {
       var i = 0;

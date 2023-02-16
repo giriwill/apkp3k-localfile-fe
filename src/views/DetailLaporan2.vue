@@ -270,6 +270,7 @@ export default {
       hari: "",
       dariJam: "",
       sampaiJam: "",
+      durasi: "",
       kegiatan: "",
       file: "",
       totalMenit: "",
@@ -297,6 +298,7 @@ export default {
         formData.append("tahun", this.tanggal.split("-")[0]);
         formData.append("hari", this.hari);
         formData.append("dari", this.dariJam);
+        formData.append("durasi", this.durasi);
         formData.append("sampai", this.sampaiJam);
         formData.append("kegiatan", this.kegiatan);
         formData.append("file", this.file);
